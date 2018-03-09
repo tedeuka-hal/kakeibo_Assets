@@ -10,6 +10,9 @@ public class SceneController : MonoBehaviour {
     public int AllGameCount
     { get { return m_AllGameCount; } }
 
+    public int StartGameCount
+    { get { return m_StartGameCount; } set { m_StartGameCount = value; } }
+
 	// Use this for initialization
 	void Start () {
         m_PopupController.StartPopupActive(true);
