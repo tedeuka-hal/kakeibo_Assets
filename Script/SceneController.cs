@@ -1,10 +1,14 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class SceneController : MonoBehaviour {
 
     [SerializeField] private PopupController m_PopupController;
+
+    private int m_AllGameCount      = 0;    // 総ゲーム数
+    private int m_StartGameCount    = 0;    // スタートゲーム数
+
+    public int AllGameCount
+    { get { return m_AllGameCount; } }
 
 	// Use this for initialization
 	void Start () {
@@ -13,6 +17,11 @@ public class SceneController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		
 	}
+
+    // 総ゲーム数カウント
+    public void UpdateGameCount(int count)
+    {
+        m_AllGameCount += count;
+    }
 }

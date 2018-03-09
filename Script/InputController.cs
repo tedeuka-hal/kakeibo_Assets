@@ -18,12 +18,12 @@ public class InputController : MonoBehaviour
 	private Text m_CollectionText;
 	[SerializeField]
 	private DataBaseController m_DatabaseController;
-
-
-
+    
 	private const string NEWSHOPDATASTRING = "新規登録";
 
-	public int ShopId
+    public Vector2 scrollPosition;
+
+    public int ShopId
 	{
 		get { return m_ShopDrowDown.value - 1; }
 	}
@@ -71,22 +71,6 @@ public class InputController : MonoBehaviour
 	void Update()
 	{
 
-	}
-
-	public Vector2 scrollPosition;
-
-	void OnGUI()
-	{
-		/*
-        scrollPosition = GUILayout.BeginScrollView(scrollPosition, GUILayout.Width(300), GUILayout.Height(100));
-        StringBuilder sb = new StringBuilder(); 
-        for(int i=0;i<10;i++)
-        {
-            sb.Append("testtttttttttttttttttttttttttttttttttt" + i).AppendLine();
-            GUILayout.Label(sb.ToString()); 
-        }
-        GUILayout.EndScrollView();
-        */
 	}
 
 	/// <summary>

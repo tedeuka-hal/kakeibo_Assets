@@ -106,4 +106,8 @@ public class InputStartGameNum : MonoBehaviour {
         return m_GameCount.ToString();
     }
         
+    public void OnEditEnd()
+    {
+        m_GameCount = int.Parse(m_GameNum.text);
+    }
 }
