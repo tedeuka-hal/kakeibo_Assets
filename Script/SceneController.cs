@@ -5,13 +5,11 @@ public class SceneController : MonoBehaviour {
     [SerializeField] private PopupController m_PopupController;
 
     private int m_AllGameCount      = 0;    // 総ゲーム数
-    private int m_StartGameCount    = 0;    // スタートゲーム数
 
     public int AllGameCount
     { get { return m_AllGameCount; } }
 
-    public int StartGameCount
-    { get { return m_StartGameCount; } set { m_StartGameCount = value; } }
+    public int StartGameCount { get; set; }
 
 	// Use this for initialization
 	void Start () {
