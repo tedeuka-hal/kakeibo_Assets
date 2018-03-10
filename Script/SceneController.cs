@@ -6,6 +6,10 @@ public class SceneController : MonoBehaviour {
 
     private int m_AllGameCount      = 0;    // 総ゲーム数
 
+    private int a = new int();
+    private string b = null;
+
+
     public int AllGameCount
     { get { return m_AllGameCount; } }
 
