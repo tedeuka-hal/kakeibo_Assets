@@ -16,9 +16,10 @@ public class InputAmusementmachineController : MonoBehaviour {
         UpdateRankCountContents();
     }
 
-    public void SettingDiscrimination(int gameCount)
+    public void SettingDiscrimination()
     {
-        m_TempNowCount = string.IsNullOrEmpty(m_NowGameCount.text) ? 0: int.Parse(m_NowGameCount.text);
+        var gameCount = int.Parse(m_NowGameCount.text);
+        m_TempNowCount = gameCount - m_SceneController.StartGameCount;
 
         foreach (Transform rankCount in m_RankContents)
         {
