@@ -3,7 +3,7 @@ using System.Collections;
 using System.Text;
 using UnityEngine.UI;
 
-public class InputController : MonoBehaviour
+public class InputInvestmentController : MonoBehaviour
 {
 
 	[SerializeField]
@@ -58,13 +58,6 @@ public class InputController : MonoBehaviour
 			registOption = new Dropdown.OptionData {text = shopdata.ShopName};
 			m_ShopDrowDown.options.Add(registOption);
 		}
-
-		/*for(int i = 0; i> 10; i++)
-		{
-
-		}
-        */
-
     }
 
 	// Update is called once per frame

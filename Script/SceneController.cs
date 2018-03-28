@@ -3,30 +3,38 @@
 public class SceneController : MonoBehaviour {
 
     [SerializeField] private PopupController m_PopupController;
+    [SerializeField] private InputAmusementmachineController m_AmusumentMachineController;
 
     private int m_AllGameCount      = 0;    // 総ゲーム数
 
-    private int a = new int();
-    private string b = null;
-
-
     public int AllGameCount
-    { get { return m_AllGameCount; } }
+    {
+        get { return GameCount > 0 ? GameCount : 0; }
+        set { m_AllGameCount = value; }
+    }
 
-    public int StartGameCount { get; set; }
+    private int GameCount
+    {
+        get { return (m_AllGameCount - StartGameCount); }
+    }
+
+    public int StartGameCount { get { return m_PopupController.GetStartGameNum; } }
 
 	// Use this for initialization
 	void Start () {
-        m_PopupController.StartPopupActive(true);
+        m_PopupController.StartPopupActive(true,()=>
+        {
+            m_AmusumentMachineController.SetGameCount(StartGameCount);
+        });
 	}
 	
-	// Update is called once per frame
-	void Update () {
-	}
-
-    // 総ゲーム数カウント
     public void UpdateGameCount(int count)
     {
         m_AllGameCount += count;
+    }
+
+    public void OpenBonusPopup()
+    {
+        m_PopupController.BonusPopupActive(true);
     }
 }

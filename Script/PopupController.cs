@@ -5,9 +5,15 @@ using UnityEngine;
 public class PopupController : MonoBehaviour {
 
 
-    [SerializeField] private GameObject m_StartPopup;
+    [SerializeField] private InputStartGameNum m_StartPopup;
 
-    [SerializeField] private GameObject m_BonusPopup;
+    [SerializeField] private InputBonusGameNum m_BonusPopup;
+
+
+    public int GetStartGameNum
+    {
+        get { return m_StartPopup.GameNum; }
+    }
 
     // Use this for initialization
     void Start () {
@@ -19,14 +25,15 @@ public class PopupController : MonoBehaviour {
 		
 	}
 
-    public void StartPopupActive(bool active)
+    public void StartPopupActive(bool active, System.Action action = null)
     {
-        m_StartPopup.SetActive(active);
+        m_StartPopup.m_OnClickAction = action;
+        m_StartPopup.gameObject.SetActive(active);
     }
 
     public void BonusPopupActive(bool active)
     {
-        m_StartPopup.SetActive(active);
-
+        m_BonusPopup.gameObject.SetActive(active);
     }
+
 }

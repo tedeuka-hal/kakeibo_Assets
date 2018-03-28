@@ -6,22 +6,10 @@ public class InputBonusGameNum : MonoBehaviour {
 
 	[SerializeField]
 	private Button m_RegistButton;
-
 	[SerializeField]
 	private DataBaseController m_DatabaseController;
-
 	[SerializeField]
 	private InputField m_GameNum;
-
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 
 	/// <summary>
 	/// ゲーム数登録ボタン
