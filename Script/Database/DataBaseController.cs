@@ -2,6 +2,7 @@
 using System.Collections;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 
 public class DataBaseController : MonoBehaviour, MyDatabaseListener {
@@ -16,44 +17,6 @@ public class DataBaseController : MonoBehaviour, MyDatabaseListener {
 		// データベースの初期化の後に行いたい処理を実装する、例えばデータベース内の値を使った他の何かの初期化とか
 	}
 
-
-    /*
-	private void Sample() {
-		// 以下は実際に使用する時の使い方の例
-		MyDatabase db = MyDatabase.Instance;
-
-		// データベースのテーブルを取得
-		DummyMasterTable dummyMasterTable = db.GetDummyMasterTable();
-		// 1行分のデータを格納するクラス
-		DummyMasterData dummyMasterData;
-
-		// 主キーによるSelect
-		dummyMasterData = dummyMasterTable.SelectFromPrimaryKey(1);
-
-		// 1行分のデータのデバッグログ出力もできます
-		dummyMasterData.DebugPrint();
-
-		// 全行取得
-		foreach (DummyMasterData data in dummyMasterTable.SelectAll()) {
-			// ループ処理
-			data.DebugPrint();
-		}
-
-		// InsertまたはUpdate
-		// ※同一の主キーのデータがあればUpdate、無ければInsertとなる
-		dummyMasterData.id = 1;
-		dummyMasterData.dummyText = "hogehoge";
-		dummyMasterData.dummyBool = false;
-		dummyMasterTable.Update(dummyMasterData);
-
-		// 主キーによるDelete
-		dummyMasterTable.DeleteFromPrimaryKey(1);
-
-		// 全行削除
-		dummyMasterTable.DeleteAll();
-	}
-    */
-
 	/// <summary>
 	/// 店舗テーブルから1件取得
 	/// </summary>
@@ -67,7 +30,7 @@ public class DataBaseController : MonoBehaviour, MyDatabaseListener {
 		// データベースのテーブルを取得
 		ShopMasterTable shopMasterTable = db.GetShopMasterTable();
 
-		return shopMasterTable.SelectFromPrimaryKey(id);
+		return shopMasterTable.SelectFromPrimaryKey<int>(new Dictionary<string, string> { {ShopMasterTable.COL_ID, "" } })[0];
 	}
 
 	/// <summary>
@@ -99,7 +62,7 @@ public class DataBaseController : MonoBehaviour, MyDatabaseListener {
 		// データベースのテーブルを取得
 		ShopMasterTable shopMasterTable = db.GetShopMasterTable();
 
-		ShopMasterData shopMasterData = shopMasterTable.SelectFromPrimaryKey(id);
+		ShopMasterData shopMasterData = shopMasterTable.SelectFromPrimaryKey<int>(new Dictionary<string, string>() { { ShopMasterTable.COL_ID , id.ToString()} } )[0];
 
 		// InsertまたはUpdate
 		// ※同一の主キーのデータがあればUpdate、無ければInsertとなる
@@ -125,13 +88,46 @@ public class DataBaseController : MonoBehaviour, MyDatabaseListener {
 		return investmentTransactionTable.SelectAll();
 	}
 
-	/// <summary>
-	/// 収支テーブルの登録／更新
-	/// </summary>
-	/// <param name="id"></param>
-	/// <param name="name"></param>
-	/// <returns></returns>
-	public bool InsertUpdateInvestmentTransaction(int shopId, int machineId, int machineNumber, int investment, int collection)
+
+    /// <summary>
+    /// 機械テーブルから全件取得
+    /// </summary>
+    /// <returns></returns>
+    public List<AmusumentMachineMasterData> SelectMachineMaster()
+    {
+        // 以下は実際に使用する時の使い方の例
+        MyDatabase db = MyDatabase.Instance;
+
+        // データベースのテーブルを取得
+        AmusumentMachineMasterTable amusumentMachineMasterTable = db.GetAmusumentMachineMasterTable();
+
+        return amusumentMachineMasterTable.SelectAll();
+    }
+
+    /// <summary>
+    /// 子役テーブル/機械子役テーブルから全件取得
+    /// </summary>
+    /// <returns></returns>
+    public List<AmusumentMachineRankMasterData> SelectMachineRank(int machineid)
+    {
+        // 以下は実際に使用する時の使い方の例
+        MyDatabase db = MyDatabase.Instance;
+
+        // データベースのテーブルを取得
+        var AmusumentMachineRankMaster = db.GetSelectJoinTable();
+        // AmusumentMachineRankMaster.ExcecuteJoinQuery<AmusumentMachineRankMasterData, AmusumentMachineRankMasterTable>();
+
+        return AmusumentMachineRankMaster.SelectFromPrimaryKey<int>(new Dictionary<string, string>() { { AmusumentMachineRankMasterTable.COL_MACHINEID, machineid.ToString() } });
+    }
+
+
+    /// <summary>
+    /// 収支テーブルの登録／更新
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    public bool InsertUpdateInvestmentTransaction(int shopId, int machineId, int machineNumber, int investment, int collection)
 	{
 		// 以下は実際に使用する時の使い方の例
 		MyDatabase db = MyDatabase.Instance;
@@ -177,4 +173,5 @@ public class DataBaseController : MonoBehaviour, MyDatabaseListener {
 		MachineReferenceTransaction.Update(MachineReferenceData);
 		return true;
 	}
+
 }

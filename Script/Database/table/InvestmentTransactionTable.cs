@@ -30,7 +30,15 @@ public class InvestmentTransactionTable : AbstractDbTable<InvestmentTransactionD
 	public InvestmentTransactionTable(ref SqliteDatabase db) : base(ref db) {
 	}
 
-	protected override string TableName {
+    protected override string[] ColList
+    {
+        get
+        {
+            return new string[] {COL_ID,COL_SHOPID,COL_MACHINEID,COL_MACHINENUMBER,COL_INVESTMENT,COL_COLLECTIONMONEY,COL_TIMESTAMP };
+        }
+    }
+
+    protected override string TableName {
 		get {
 			return "InvestmentTransaction";
 		}
@@ -80,4 +88,18 @@ public class InvestmentTransactionTable : AbstractDbTable<InvestmentTransactionD
         data.timestamp = GetStringValue(row, COL_TIMESTAMP);
 		return data;
 	}
+
+    public override InvestmentTransactionData PutJoinData(DataRow row)
+    {
+        InvestmentTransactionData data = new InvestmentTransactionData();
+        data.id = GetIntValue(row, ColAddTableName(COL_ID));
+        data.shopid = GetIntValue(row, ColAddTableName(COL_SHOPID));
+        data.machineid = GetIntValue(row, ColAddTableName(COL_MACHINEID));
+        data.machinenumber = GetIntValue(row, ColAddTableName(COL_MACHINENUMBER));
+        data.investment = GetIntValue(row, ColAddTableName(COL_INVESTMENT));
+        data.collectionmoney = GetIntValue(row, ColAddTableName(COL_COLLECTIONMONEY));
+        data.timestamp = GetStringValue(row, ColAddTableName(COL_TIMESTAMP));
+        return data;
+    }
+
 }

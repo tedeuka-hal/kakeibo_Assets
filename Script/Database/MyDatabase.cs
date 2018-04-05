@@ -166,16 +166,20 @@ public class MyDatabase {
 	private DummyCaptureTable mDummyCaptureTable;
 	private ShopMasterTable m_ShopMasterTable;
 	private InvestmentTransactionTable m_InvestmentTransactionTable;
+    private AmusumentMachineMasterTable m_AmusumentMachineMasterTable;
 	private MachineReferenceTransactionTable m_MachineReferenceTransactionTable;
+    private SelectJoinTable m_SelectJoinTable;
+    private AmusumentMachineRankMasterTable m_AmusumentMachineRankMasterTable;
 
 	private void CreateDbTables() {
 		mDummyMasterTable = new DummyMasterTable(ref mDb);
 		mDummyCaptureTable = new DummyCaptureTable(ref mDb);
 		m_ShopMasterTable = new ShopMasterTable(ref mDb);
 		m_InvestmentTransactionTable = new InvestmentTransactionTable(ref mDb);
-
-
-	}
+        m_AmusumentMachineMasterTable = new AmusumentMachineMasterTable(ref mDb);
+        m_SelectJoinTable = new SelectJoinTable(ref mDb);
+        m_AmusumentMachineRankMasterTable = new AmusumentMachineRankMasterTable(ref mDb);
+    }
 
 	private void MargeData(ref SqliteDatabase oldDb) {
 		mDummyMasterTable.MargeData(ref oldDb);
@@ -197,4 +201,19 @@ public class MyDatabase {
 	{
 		return m_MachineReferenceTransactionTable;
 	}
+
+    public AmusumentMachineMasterTable GetAmusumentMachineMasterTable()
+    {
+        return m_AmusumentMachineMasterTable;
+    }
+
+    public SelectJoinTable GetSelectJoinTable()
+    {
+        return m_SelectJoinTable;
+    }
+
+    public AmusumentMachineRankMasterTable GetAmusumentMachineRankMasterTable()
+    {
+        return m_AmusumentMachineRankMasterTable;
+    }
 }

@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Text;
+using System.Collections.Generic;
 
 public class DummyMasterData : AbstractData {
 	public int id = 0;
@@ -25,7 +26,15 @@ public class DummyMasterTable : AbstractDbTable<DummyMasterData> {
 		}
 	}
 
-	public override void MargeData(ref SqliteDatabase oldDb) {
+    protected override string[] ColList
+    {
+        get
+        {
+            throw new System.NotImplementedException();
+        }
+    }
+
+    public override void MargeData(ref SqliteDatabase oldDb) {
 	}
 
 	public override void Update(DummyMasterData data) {
@@ -34,7 +43,7 @@ public class DummyMasterTable : AbstractDbTable<DummyMasterData> {
 		}
 
 		StringBuilder query = new StringBuilder();
-		DummyMasterData selectData = SelectFromPrimaryKey(data.id);
+        DummyMasterData selectData = null; // SelectFromPrimaryKey<int>(new List<int>() { data.id })[0];
 		if (selectData == null) {
 			query.Append("INSERT INTO ");
 			query.Append(TableName);
@@ -76,4 +85,9 @@ public class DummyMasterTable : AbstractDbTable<DummyMasterData> {
 		data.dummyBool = GetBoolValue(row, "dummyBool");
 		return data;
 	}
+
+    public override DummyMasterData PutJoinData(DataRow row)
+    {
+        throw new System.NotImplementedException();
+    }
 }

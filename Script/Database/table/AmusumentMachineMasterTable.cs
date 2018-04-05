@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Text;
+using System.Collections.Generic;
 
 public class AmusumentMachineMasterData : AbstractData {
 	public int machinenumber = 0;
@@ -11,13 +12,22 @@ public class AmusumentMachineMasterData : AbstractData {
 }
 
 public class AmusumentMachineMasterTable : AbstractDbTable<AmusumentMachineMasterData> {
-	private static readonly string COL_MACHINENUMBER = "machinenumber";
-	private static readonly string COL_MACHINENAME = "machineName";
 
-	public AmusumentMachineMasterTable(ref SqliteDatabase db) : base(ref db) {
+	public static readonly string COL_MACHINEID = "machineid";
+    public static readonly string COL_MACHINENAME = "machineName";
+
+    protected override string[] ColList
+    {
+        get
+        {
+            return new string[] { COL_MACHINEID, COL_MACHINENAME };
+        }
+    }
+
+    public AmusumentMachineMasterTable(ref SqliteDatabase db) : base(ref db) {
 	}
 
-	protected override string TableName {
+    protected override string TableName {
 		get {
 			return "AmusumentMachineMaster";
 		}
@@ -26,13 +36,13 @@ public class AmusumentMachineMasterTable : AbstractDbTable<AmusumentMachineMaste
 	public override void MargeData(ref SqliteDatabase oldDb) {
 	}
 
-	public override void Update(AmusumentMachineMasterData data) {
-		if (data.machinenumber <= DbDefine.DB_INVALID_PRIMARY_ID) {
-			return;
-		}
+    public override void Update(AmusumentMachineMasterData data) {
+        if (data.machinenumber <= DbDefine.DB_INVALID_PRIMARY_ID) {
+            return;
+        }
 
-		StringBuilder query = new StringBuilder();
-		AmusumentMachineMasterData selectData = SelectFromPrimaryKey(data.machinenumber);
+        StringBuilder query = new StringBuilder();
+        AmusumentMachineMasterData selectData = SelectFromPrimaryKey<int>(new Dictionary<string, string>() { { COL_MACHINEID,data.machinenumber.ToString() } })[0];
 		if (selectData == null) {
 			query.Append("INSERT INTO ");
 			query.Append(TableName);
@@ -53,7 +63,7 @@ public class AmusumentMachineMasterTable : AbstractDbTable<AmusumentMachineMaste
 			query.Append(data.machineName);
 			query.Append("'");
 			query.Append(" WHERE ");
-			query.Append(COL_MACHINENUMBER);
+			query.Append(COL_MACHINEID);
 			query.Append("=");
 			query.Append(data.machinenumber);
 			query.Append(";");
@@ -63,8 +73,16 @@ public class AmusumentMachineMasterTable : AbstractDbTable<AmusumentMachineMaste
 
 	protected override AmusumentMachineMasterData PutData(DataRow row) {
 		AmusumentMachineMasterData data = new AmusumentMachineMasterData();
-		data.machinenumber = GetIntValue(row, "machinenumber");
-		data.machineName = GetStringValue(row, "machineName");
+		data.machinenumber = GetIntValue(row, COL_MACHINEID);
+		data.machineName = GetStringValue(row, COL_MACHINENAME);
 		return data;
 	}
+
+    public override AmusumentMachineMasterData PutJoinData(DataRow row)
+    {
+        AmusumentMachineMasterData data = new AmusumentMachineMasterData();
+        data.machinenumber = GetIntValue(row, ColAddTableName(COL_MACHINEID));
+        data.machineName = GetStringValue(row, ColAddTableName(COL_MACHINENAME));
+        return data;
+    }
 }

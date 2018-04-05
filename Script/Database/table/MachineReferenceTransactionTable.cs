@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Text;
+using System.Collections.Generic;
 
 public class MachineReferenceTransactionData : AbstractData {
 	public int id = 0;
@@ -14,16 +15,24 @@ public class MachineReferenceTransactionData : AbstractData {
 }
 
 public class MachineReferenceTransactionTable : AbstractDbTable<MachineReferenceTransactionData> {
-	private static readonly string COL_ID = "id";
-	private static readonly string COL_MACHINEID = "machineid";
-	private static readonly string COL_MACHINEIDREF = "machineidref";
-	private static readonly string COL_RANK = "rank";
-	private static readonly string COL_GAMENUM = "gamenum";
+	public static readonly string COL_ID = "id";
+    public static readonly string COL_MACHINEID = "machineid";
+    public static readonly string COL_MACHINEIDREF = "machineidref";
+    public static readonly string COL_RANK = "rank";
+    public static readonly string COL_GAMENUM = "gamenum";
 
 	public MachineReferenceTransactionTable(ref SqliteDatabase db) : base(ref db) {
 	}
 
-	protected override string TableName {
+    protected override string[] ColList
+    {
+        get
+        {
+            return new string[] { COL_ID, COL_MACHINEID, COL_MACHINEIDREF, COL_RANK, COL_GAMENUM };
+        }
+    }
+
+    protected override string TableName {
 		get {
 			return "MachineReferenceTransaction";
 		}
@@ -38,7 +47,7 @@ public class MachineReferenceTransactionTable : AbstractDbTable<MachineReference
 		}
 
 		StringBuilder query = new StringBuilder();
-		MachineReferenceTransactionData selectData = SelectFromPrimaryKey(data.id);
+		MachineReferenceTransactionData selectData = SelectFromPrimaryKey<int>(new Dictionary<string, string>() { { COL_ID, data.id.ToString()} })[0];
 
 		query.Append("INSERT INTO ");
 		query.Append(TableName);
@@ -59,11 +68,22 @@ public class MachineReferenceTransactionTable : AbstractDbTable<MachineReference
 
 	protected override MachineReferenceTransactionData PutData(DataRow row) {
 		MachineReferenceTransactionData data = new MachineReferenceTransactionData();
-		data.id = GetIntValue(row, "id");
-		data.machineid = GetIntValue(row, "machineid");
-		data.machineidref = GetIntValue(row, "machineidref");
-		data.rank = GetIntValue(row, "rank");
-		data.gamenum = GetIntValue(row, "gamenum");
+		data.id = GetIntValue(row, COL_ID);
+		data.machineid = GetIntValue(row, COL_MACHINEID);
+		data.machineidref = GetIntValue(row, COL_MACHINEIDREF);
+		data.rank = GetIntValue(row, COL_RANK);
+		data.gamenum = GetIntValue(row, COL_GAMENUM);
 		return data;
 	}
+
+    public override MachineReferenceTransactionData PutJoinData(DataRow row)
+    {
+        MachineReferenceTransactionData data = new MachineReferenceTransactionData();
+        data.id = GetIntValue(row, ColAddTableName(COL_ID));
+        data.machineid = GetIntValue(row, ColAddTableName(COL_MACHINEID));
+        data.machineidref = GetIntValue(row, ColAddTableName(COL_MACHINEIDREF));
+        data.rank = GetIntValue(row, ColAddTableName(COL_RANK));
+        data.gamenum = GetIntValue(row, ColAddTableName(COL_GAMENUM));
+        return data;
+    }
 }

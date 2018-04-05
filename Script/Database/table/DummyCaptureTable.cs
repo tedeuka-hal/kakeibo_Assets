@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Text;
+using System.Collections.Generic;
 
 public class DummyCaptureData : AbstractData {
 	public int id = 0;
@@ -12,7 +13,7 @@ public class DummyCaptureData : AbstractData {
 }
 
 public class DummyCaptureTable : AbstractDbTable<DummyCaptureData> {
-	private static readonly string COL_ID = "id";
+    private static readonly string COL_ID = "id";
 	private static readonly string COL_DUMMYTEXT = "dummyText";
 	private static readonly string COL_DUMMYBOOL = "dummyBool";
 
@@ -25,7 +26,15 @@ public class DummyCaptureTable : AbstractDbTable<DummyCaptureData> {
 		}
 	}
 
-	public override void MargeData(ref SqliteDatabase oldDb) {
+    protected override string[] ColList
+    {
+        get
+        {
+          return new string[]{ COL_ID, COL_DUMMYTEXT, COL_DUMMYBOOL };
+        }
+    }
+
+    public override void MargeData(ref SqliteDatabase oldDb) {
 		DummyCaptureTable oldTable = new DummyCaptureTable(ref oldDb);
 		foreach (DummyCaptureData oldData in oldTable.SelectAll()) {
 			Update(oldData);
@@ -38,7 +47,7 @@ public class DummyCaptureTable : AbstractDbTable<DummyCaptureData> {
 		}
 
 		StringBuilder query = new StringBuilder();
-		DummyCaptureData selectData = SelectFromPrimaryKey(data.id);
+        DummyCaptureData selectData = null;// SelectFromPrimaryKey<int>(new List<int>() { data.id })[0];
 		if (selectData == null) {
 			query.Append("INSERT INTO ");
 			query.Append(TableName);
@@ -80,4 +89,9 @@ public class DummyCaptureTable : AbstractDbTable<DummyCaptureData> {
 		data.dummyBool = GetBoolValue(row, "dummyBool");
 		return data;
 	}
+
+    public override DummyCaptureData PutJoinData(DataRow row)
+    {
+        throw new System.NotImplementedException();
+    }
 }

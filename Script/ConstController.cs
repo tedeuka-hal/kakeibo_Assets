@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -17,5 +15,5 @@ public class ConstController : MonoBehaviour
 		DateTime date = DateTime.Today;
 		m_Date.text = date.ToString("yyyy/MM/dd");
 	}
-
 }
+    

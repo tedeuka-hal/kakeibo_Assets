@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using UnityEngine;
 
 /// <summary>
 /// DB関連定義クラス
@@ -32,7 +33,7 @@ public abstract class AbstractData {
 /// <summary>
 /// DBテーブル基底クラス
 /// </summary>
-/// <typeparam name="T">使用するデータクラス</typeparam>
+/// <typeparam name="T">使用するテーブルクラス</typeparam>
 public abstract class AbstractDbTable<T> where T : AbstractData {
 	// データベース
 	protected SqliteDatabase mDb;
@@ -42,10 +43,15 @@ public abstract class AbstractDbTable<T> where T : AbstractData {
 	/// </summary>
 	protected abstract string TableName { get; }
 
+    /// <summary>
+    /// 項目リスト
+    /// </summary>
+    protected abstract string[] ColList { get; }
+
 	/// <summary>
 	/// 主キー名(大抵は"id"としている、必要ならoverrideすること)
 	/// </summary>
-	protected virtual string[] PrimaryKeyName { get { string[] str = { "id" }; return str; } }
+	protected virtual string[] PrimaryKeyName { get { return new string[] { "id" };  } }
 
 	/// <summary>
 	/// コンストラクタ
@@ -64,6 +70,33 @@ public abstract class AbstractDbTable<T> where T : AbstractData {
 		}
 	}
 
+    /// <summary>
+    /// 列名にテーブル修飾子を加える
+    /// </summary>
+    public List<string> ColAddTableName()
+    {
+        var list = new List<string>();
+        foreach(var col in ColList)
+        {
+            list.Add(ColAddTableName(col));
+        }
+        return list;
+    }
+
+    public string ColAddTableName(string col)
+    {
+        return TableName + "." + col;
+    }
+
+    /// <summary>
+    /// テーブル名を取得する
+    /// </summary>
+    /// <returns></returns>
+    public string GetTableName()
+    {
+        return TableName;
+    }
+
 	/// <summary>
 	/// 古いデータを新しいデータにマージする
 	/// </summary>
@@ -79,35 +112,38 @@ public abstract class AbstractDbTable<T> where T : AbstractData {
 	/// <summary>
 	/// 主キーを指定して該当するデータを取得する
 	/// </summary>
-	/// <param name="id">主キー[shopid,machineid,machineNumber]</param>
+	/// <param name="id">主キー</param>
 	/// <returns>データ、ただし存在しない場合はnull</returns>
-	public T SelectFromPrimaryKey(params int[] id) {
+	public List<T> SelectFromPrimaryKey<U>(Dictionary<string, string> whereQuery)
+    {
 		StringBuilder query = new StringBuilder();
 		query.Append("SELECT * FROM ");
 		query.Append(TableName);
-		query.Append(" WHERE ");
-		for(int i = 0; i<PrimaryKeyName.Length; i++)
-		{
-			query.Append(PrimaryKeyName[i]);
-			query.Append("=");
-			query.Append(id[i].ToString());
-			if (i < PrimaryKeyName.Length - 1)	// 最終条件には接続詞をつけない
-				query.Append(" AND ");
-		}
-		query.Append(";");
+
+        QueryUtility.CreateWhereQuery(ref query, whereQuery);
+
+        Debug.Log(query);
+        query.Append(";");
 		DataTable dt = mDb.ExecuteQuery(query.ToString());
 		if (dt.Rows.Count == 0) {
 			return null;
 		} else {
-			return PutData(dt[0]);
+            var list = new List<T>();
+
+            foreach (var row in dt.Rows)
+            {
+                list.Add(PutData(row));
+            }
+
+            return list;
 		}
 	}
 
-	/// <summary>
-	/// 全データを取得する
-	/// </summary>
-	/// <returns>データリスト</returns>
-	public List<T> SelectAll() {
+    /// <summary>
+    /// 全データを取得する
+    /// </summary>
+    /// <returns>データリスト</returns>
+    public List<T> SelectAll() {
 		List<T> dataList = new List<T>();
 		StringBuilder query = new StringBuilder();
 		query.Append("SELECT * FROM ");
@@ -154,12 +190,19 @@ public abstract class AbstractDbTable<T> where T : AbstractData {
 	/// <returns>データクラスのインスタンス</returns>
 	protected abstract T PutData(DataRow row);
 
-	/// <summary>
-	/// 列データから値を取得する
-	/// </summary>
-	/// <param name="row">列データ</param>
-	/// <param name="key">値キー</param>
-	protected int GetIntValue(DataRow row, string key) {
+    /// <summary>
+    /// 結合テーブルの列データをデータクラスに詰め込む
+    /// </summary>
+    /// <param name="row">列データ</param>
+    /// <returns>データクラスのインスタンス</returns>
+    public abstract T PutJoinData(DataRow row);
+
+    /// <summary>
+    /// 列データから値を取得する
+    /// </summary>
+    /// <param name="row">列データ</param>
+    /// <param name="key">値キー</param>
+    protected int GetIntValue(DataRow row, string key) {
 		return GetIntValue(row, key, 0);
 	}
 

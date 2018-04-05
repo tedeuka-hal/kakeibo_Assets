@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Text;
+using System.Collections.Generic;
 
 public class ShopMasterData : AbstractData {
 	public int id = 0;
@@ -11,13 +12,21 @@ public class ShopMasterData : AbstractData {
 }
 
 public class ShopMasterTable : AbstractDbTable<ShopMasterData> {
-	private static readonly string COL_ID = "id";
-	private static readonly string COL_SHOPNAME = "ShopName";
+	public static readonly string COL_ID = "id";
+	public static readonly string COL_SHOPNAME = "ShopName";
 
 	public ShopMasterTable(ref SqliteDatabase db) : base(ref db) {
 	}
 
-	protected override string TableName {
+    protected override string[] ColList
+    {
+        get
+        {
+            return new string[] { COL_ID, COL_SHOPNAME };
+        }
+    }
+
+    protected override string TableName {
 		get {
 			return "ShopMaster";
 		}
@@ -32,7 +41,7 @@ public class ShopMasterTable : AbstractDbTable<ShopMasterData> {
 		}
 
 		StringBuilder query = new StringBuilder();
-		ShopMasterData selectData = SelectFromPrimaryKey(data.id);
+		ShopMasterData selectData = SelectFromPrimaryKey<int>(new Dictionary<string, string>() { {COL_ID, data.id.ToString() } })[0];
 		if (selectData == null) {
 			query.Append("INSERT INTO ");
 			query.Append(TableName);
@@ -64,8 +73,16 @@ public class ShopMasterTable : AbstractDbTable<ShopMasterData> {
 
 	protected override ShopMasterData PutData(DataRow row) {
 		ShopMasterData data = new ShopMasterData();
-		data.id = GetIntValue(row, "id");
-		data.ShopName = GetStringValue(row, "ShopName");
+		data.id = GetIntValue(row, COL_ID);
+		data.ShopName = GetStringValue(row, COL_SHOPNAME);
 		return data;
 	}
+
+    public override ShopMasterData PutJoinData(DataRow row)
+    {
+        ShopMasterData data = new ShopMasterData();
+        data.id = GetIntValue(row, ColAddTableName(COL_ID));
+        data.ShopName = GetStringValue(row, ColAddTableName(COL_SHOPNAME));
+        return data;
+    }
 }
